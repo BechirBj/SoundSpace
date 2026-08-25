@@ -1,98 +1,171 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { CheckCircle2, Folder } from "lucide-react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function Index() {
+  const router = useRouter();
+  const { width } = useWindowDimensions();
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const imageHeight = Math.min(width * 0.95, 400);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Image
+          source={require("@/assets/landingIcon.jpg")}
+          contentFit="cover"
+          style={[styles.heroImage, { height: imageHeight }]}
+          transition={200}
+        />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+        <View style={styles.content}>
+          <View style={styles.badge}>
+            <CheckCircle2 size={18} color="#D0BCFF" strokeWidth={2.5} />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+            <Text style={styles.badgeText}>LOCAL PLAYBACK ONLY</Text>
+          </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>
+              Your Music,
+              {"\n"}Your Way.
+            </Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <Text style={styles.subtitle}>
+              This app plays music stored strictly on your device. 100% offline.
+              No accounts. No streaming. Just your collection, beautifully
+              presented.
+            </Text>
+          </View>
+
+          <View style={styles.actionContainer}>
+            <Pressable
+              onPress={() => router.replace("/(tabs)/home")}
+              style={({ pressed }) => [
+                styles.button,
+                pressed && styles.buttonPressed,
+              ]}
+              android_ripple={{ color: "#B99FEF" }}
+              accessibilityRole="button"
+              accessibilityLabel="Grant permission to access local music"
+            >
+              <Folder size={22} color="#3C0091" strokeWidth={2.5} />
+
+              <Text style={styles.buttonText}>Grant Permission</Text>
+            </Pressable>
+
+            <Text style={styles.finalText}>
+              We need access to your local storage to find your audio files.
+            </Text>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: "#171E3C",
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+
+  container: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    paddingHorizontal: 16,
   },
+
+  heroImage: {
+    width: "100%",
+    borderRadius: 24,
+  },
+
+  content: {
+    flex: 1,
+    paddingTop: 20,
+  },
+
+  badge: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    backgroundColor: "#122131",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#1A2635",
+  },
+
+  badgeText: {
+    color: "#D0BCFF",
+    fontSize: 13,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+
+  textContainer: {
+    marginTop: 28,
+  },
+
   title: {
-    textAlign: 'center',
+    color: "#FFFFFF",
+    fontSize: 38,
+    lineHeight: 44,
+    fontWeight: "800",
+    letterSpacing: -0.8,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  subtitle: {
+    marginTop: 16,
+    color: "#B9C0D4",
+    fontSize: 16,
+    lineHeight: 24,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  actionContainer: {
+    marginTop: "auto",
+    paddingTop: 28,
+    paddingBottom: 12,
+  },
+
+  button: {
+    minHeight: 58,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    backgroundColor: "#D0BCFF",
+  },
+
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
+  },
+
+  buttonText: {
+    color: "#3C0091",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+
+  finalText: {
+    marginTop: 12,
+    paddingHorizontal: 12,
+    textAlign: "center",
+    color: "#7F8BA3",
+    fontSize: 13,
+    lineHeight: 19,
   },
 });
