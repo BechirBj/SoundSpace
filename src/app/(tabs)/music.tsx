@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { ArrowDownUp, Search } from "lucide-react-native";
+import { ArrowDownUp, Music2, Search, Turntable } from "lucide-react-native";
 import { useState } from "react";
 import {
   FlatList,
@@ -7,9 +7,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const categories = [
   { id: "1", title: "Songs" },
@@ -61,105 +65,145 @@ const songs = [
 
 export default function Music() {
   const [selectedCategory, setSelectedCategory] = useState("1");
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Music</Text>
-
-      {/* Search */}
-      <View style={styles.searchContainer}>
-        <Search size={20} color="#A0A5B5" />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Search music..."
-          placeholderTextColor="#A0A5B5"
-          returnKeyType="search"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+    <SafeAreaView style={styles.subcontainer}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
+        <View style={styles.brandRow}>
+          <Music2 size={28} color={"#d0bcff"} />
+          <Text style={styles.brandTitle}>Soundscape</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.rescanButton}
+          // onPress={() => router.push("/(tabs)/settings")}
+        >
+          <Turntable size={22} color={"#d0bcff"} />
+        </TouchableOpacity>
       </View>
+      <View style={styles.container}>
+        {/* Search */}
+        <View style={styles.searchContainer}>
+          <Search size={20} color="#A0A5B5" />
 
-      {/* Categories */}
-      <View style={styles.categoryContainer}>
-        <FlatList
-          data={categories}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.categoryList}
-          renderItem={({ item }) => {
-            const isSelected = selectedCategory === item.id;
+          <TextInput
+            style={styles.input}
+            placeholder="Search music..."
+            placeholderTextColor="#A0A5B5"
+            returnKeyType="search"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
 
-            return (
-              <Pressable
-                onPress={() => setSelectedCategory(item.id)}
-                style={[styles.category, isSelected && styles.categoryActive]}
-              >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    isSelected && styles.categoryTextActive,
-                  ]}
+        {/* Categories */}
+        <View style={styles.categoryContainer}>
+          <FlatList
+            data={categories}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.categoryList}
+            renderItem={({ item }) => {
+              const isSelected = selectedCategory === item.id;
+
+              return (
+                <Pressable
+                  onPress={() => setSelectedCategory(item.id)}
+                  style={[styles.category, isSelected && styles.categoryActive]}
                 >
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      isSelected && styles.categoryTextActive,
+                    ]}
+                  >
+                    {item.title}
+                  </Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
+
+        {/* Tracks header */}
+        <View style={styles.trackHeader}>
+          <Pressable style={styles.sortButton} hitSlop={8}>
+            <ArrowDownUp size={18} color="#FFFFFF" />
+            <Text style={styles.sortText}>Date Added</Text>
+          </Pressable>
+
+          <Text style={styles.trackCount}>{songs.length} Tracks</Text>
+        </View>
+
+        {/* Songs */}
+        <FlatList
+          data={songs}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.songList}
+          renderItem={({ item }) => (
+            <Pressable style={styles.song}>
+              <Image
+                source={item.thumbnail}
+                transition={100}
+                contentFit="cover"
+                style={styles.songThumbnail}
+              />
+
+              <View style={styles.songInfo}>
+                <Text style={styles.songTitle} numberOfLines={1}>
                   {item.title}
                 </Text>
-              </Pressable>
-            );
-          }}
+
+                <Text style={styles.songArtist} numberOfLines={1}>
+                  {item.artist} · {item.album}
+                </Text>
+              </View>
+
+              <Text style={styles.duration}>{item.duration}</Text>
+            </Pressable>
+          )}
         />
       </View>
-
-      {/* Tracks header */}
-      <View style={styles.trackHeader}>
-        <Pressable style={styles.sortButton} hitSlop={8}>
-          <ArrowDownUp size={18} color="#FFFFFF" />
-          <Text style={styles.sortText}>Date Added</Text>
-        </Pressable>
-
-        <Text style={styles.trackCount}>{songs.length} Tracks</Text>
-      </View>
-
-      {/* Songs */}
-      <FlatList
-        data={songs}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.songList}
-        renderItem={({ item }) => (
-          <Pressable style={styles.song}>
-            <Image
-              source={item.thumbnail}
-              transition={100}
-              contentFit="cover"
-              style={styles.songThumbnail}
-            />
-
-            <View style={styles.songInfo}>
-              <Text style={styles.songTitle} numberOfLines={1}>
-                {item.title}
-              </Text>
-
-              <Text style={styles.songArtist} numberOfLines={1}>
-                {item.artist} · {item.album}
-              </Text>
-            </View>
-
-            <Text style={styles.duration}>{item.duration}</Text>
-          </Pressable>
-        )}
-      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  subcontainer: {
     flex: 1,
+    backgroundColor: "#171E3C",
+    // paddingHorizontal: 20,
+  },
+  container: {
+    // flex: 1,
     backgroundColor: "#171E3C",
     paddingHorizontal: 20,
   },
-
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    backgroundColor: "#171E3C",
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  brandTitle: {
+    // ...Typogr:aphy.headlineMd,
+    color: "#d0bcff",
+    fontWeight: "700",
+  },
+  rescanButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+  },
   title: {
     color: "#FFFFFF",
     fontSize: 24,
