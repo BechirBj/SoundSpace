@@ -54,7 +54,7 @@ const songs = [
     artist: "The Weeknd",
     album: "Starboy",
     thumbnail:
-      "https://i.scdn.co/image/ab67616d0000b273e0e6e3b5e6e4b6c0f4b8e5f",
+      "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.JiFi9sqSOh1x2vUkyw0QzgHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=759d7af1d45537c4430ac9f3e554916d8aebd7b35efc44b60ccba64803c62299&ipo=images",
     duration: "3:50",
   },
 ];
